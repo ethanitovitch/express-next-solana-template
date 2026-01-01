@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { getExample } from '@/api/controllers/example.controller'
-import { validateAndMerge } from '@/api/middlewares/validationMiddleware'
+import { validateAndMerge } from '@/api/middlewares/validation.middleware'
 import { GetExampleRequestSchema } from '@shared/types/src'
 import { validatedRoute } from './utils'
 

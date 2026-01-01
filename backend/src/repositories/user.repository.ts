@@ -1,32 +1,65 @@
 import { db } from '@/lib/db'
+import { withIdAndTimestamps, withTimestamps } from '@/repositories/utils'
+import { DBUser, InsertDBUser } from '@shared/db/src'
+import { REFERRAL_DEFAULT_BASIS_POINTS } from '@shared/types/src'
 
-export const findById = async (id: string) => {
-  const user = await db
-    .selectFrom('user')
-    .where('id', '=', id)
+export async function findByPublicKey(
+  publicKey: string,
+): Promise<DBUser | undefined> {
+  return await db
+    .selectFrom("user")
     .selectAll()
-    .executeTakeFirst()
-  return user
+    .where("publicKey", "=", publicKey)
+    .executeTakeFirst();
 }
 
-export const findAccountByUserId = async (userId: string) => {
-  const account = await db
-    .selectFrom('account')
-    .where('account.userId', '=', userId)
+export async function findByUsernameSlug(usernameSlug: string): Promise<DBUser | undefined> {
+  return await db
+    .selectFrom("user")
     .selectAll()
-    .executeTakeFirst()
-  return account
+    .where("usernameSlug", "=", usernameSlug)
+    .executeTakeFirst();
 }
 
-export const isMemberOfOrganization = async (
-  userId: string,
-  organizationId: string,
-) => {
-  const member = await db
-    .selectFrom('member')
-    .where('userId', '=', userId)
-    .where('organizationId', '=', organizationId)
+export async function findById(id: string): Promise<DBUser | undefined> {
+  return db
+    .selectFrom("user")
     .selectAll()
-    .executeTakeFirst()
-  return member !== null
+    .where("id", "=", id)
+    .executeTakeFirst();
 }
+
+export async function create(user: Omit<InsertDBUser, "id" | "createdAt" | "updatedAt">): Promise<DBUser> {
+  return db
+    .insertInto("user")
+    .values(withIdAndTimestamps({
+      ...user,
+      isAdmin: false, 
+      isChatModerator: false,
+      referralBasisPoints: REFERRAL_DEFAULT_BASIS_POINTS,
+      isStreamer: false,
+      isBanned: false,
+    }, true))
+    .returningAll()
+    .executeTakeFirstOrThrow();
+}
+
+export async function update(
+  id: string,
+  data: Partial<DBUser>,
+): Promise<DBUser> {
+  return db
+    .updateTable("user")
+    .set(withTimestamps(data, false))
+    .where("id", "=", id)
+    .returningAll()
+    .executeTakeFirstOrThrow();
+}
+
+export const findByReferralCodeSlug = async (referralCodeSlug: string) => {
+  return db
+    .selectFrom("user")
+    .selectAll()
+    .where("referralCodeSlug", "=", referralCodeSlug)
+    .executeTakeFirst();
+};

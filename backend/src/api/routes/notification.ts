@@ -6,8 +6,8 @@ import {
   markAllAsRead,
 } from '@/api/controllers/notification.controller'
 import { authenticatedRoute } from './utils'
-import { withBetterAuth } from '../middlewares/auth'
-import { validateAndMerge } from '../middlewares/validationMiddleware'
+import { withBetterAuth } from '../middlewares/auth.middleware'
+import { validateAndMerge } from '../middlewares/validation.middleware'
 import {
   GetNotificationsRequest,
   GetNotificationsRequestSchema,

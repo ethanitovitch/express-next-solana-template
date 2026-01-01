@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { withBetterAuth } from '../middlewares/auth'
-import { validateAndMerge } from '../middlewares/validationMiddleware'
+import { withBetterAuth } from '../middlewares/auth.middleware'
+import { validateAndMerge } from '../middlewares/validation.middleware'
 import { authenticatedRoute } from './utils'
 import { authChannel } from '../controllers/pusher.controller'
 import { PusherAuthRequest, PusherAuthRequestSchema } from '@shared/types/src'
